@@ -1,6 +1,7 @@
 package com.digitalkh.sgvdkapi.user.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -14,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.digitalkh.sgvdkapi.order.model.Order;
+import com.digitalkh.sgvdkapi.order.service.OrderService;
 import com.digitalkh.sgvdkapi.user.authentication.signup.confirmation_token.ConfirmationToken;
 import com.digitalkh.sgvdkapi.user.authentication.signup.confirmation_token.ConfirmationTokenService;
 import com.digitalkh.sgvdkapi.user.dto.UserChangePasswordDto;
@@ -33,6 +36,9 @@ public class UserService implements UserDetailsService {
 	
 	@Autowired
 	private ConfirmationTokenService tokenService;
+	
+	@Autowired
+	private OrderService orderService;
 
 	@Override
 	@Transactional
@@ -94,7 +100,6 @@ public class UserService implements UserDetailsService {
 			user.setName(request.getName());
 			user.setLastname(request.getLastname());
 			user.setPhone(request.getPhone());
-			user.setEmail(request.getEmail());
 		} else {
 			return "Any user logged in o user does not exist!";
 		}
@@ -111,5 +116,14 @@ public class UserService implements UserDetailsService {
 		}
 		
 		return ResponseEntity.badRequest().body("Any user logged in o user does not exist!");
+	}
+	
+	public List<Order> getOrders(){
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return orderService.findByUser(user);
+	}
+	
+	public Order getOrder(Long orderId) {
+		return orderService.findById(orderId).orElseThrow(null);
 	}
 }

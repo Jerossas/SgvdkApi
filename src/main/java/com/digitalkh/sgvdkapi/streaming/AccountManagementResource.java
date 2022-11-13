@@ -22,22 +22,22 @@ import com.digitalkh.sgvdkapi.streaming.model.Account;
 import com.digitalkh.sgvdkapi.streaming.model.AccountProfile;
 import com.digitalkh.sgvdkapi.streaming.model.AccountType;
 import com.digitalkh.sgvdkapi.streaming.repository.AccountTypeRepository;
-import com.digitalkh.sgvdkapi.streaming.service.implementation.AccountProfileServiceImpl;
-import com.digitalkh.sgvdkapi.streaming.service.implementation.AccountServiceImpl;
+import com.digitalkh.sgvdkapi.streaming.service.AccountProfileService;
+import com.digitalkh.sgvdkapi.streaming.service.AccountService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-@RequestMapping("/api/admin/account")
+@RequestMapping("/api/admin/management/account")
 public class AccountManagementResource {
 
 	@Autowired
-	private AccountServiceImpl accountServiceImpl;
+	private AccountService accountServiceImpl;
 	
 	@Autowired
-	private AccountProfileServiceImpl accountProfileServiceImpl;
+	private AccountProfileService accountProfileServiceImpl;
 	
 	@Autowired
 	private AccountTypeRepository accountTypeRepository;

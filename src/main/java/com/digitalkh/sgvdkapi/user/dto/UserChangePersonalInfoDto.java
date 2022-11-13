@@ -12,5 +12,4 @@ public class UserChangePersonalInfoDto {
 	private String name;
 	private String lastname;
 	private String phone;  
-	private String email;
 }

@@ -3,6 +3,7 @@ package com.digitalkh.sgvdkapi;
 import static com.digitalkh.sgvdkapi.user.model.ERole.ROLE_ADMIN;
 import static com.digitalkh.sgvdkapi.user.model.ERole.ROLE_USER;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,6 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.digitalkh.sgvdkapi.order.model.Order;
+import com.digitalkh.sgvdkapi.order.repository.OrderRepository;
 import com.digitalkh.sgvdkapi.streaming.enumeration.EAccountType;
 import com.digitalkh.sgvdkapi.streaming.model.Account;
 import com.digitalkh.sgvdkapi.streaming.model.AccountProfile;
@@ -35,20 +38,27 @@ public class SgvdkapiApplication {
 	@Bean
 	public CommandLineRunner lineRunner(UserRepository userRepository, RoleRepository roleRepository,
 			PasswordEncoder passwordEncoder, AccountRepository accountRepository,
-			AccountTypeRepository accountTypeRepository, AccountProfileRepository profileRepository) {
+			AccountTypeRepository accountTypeRepository, AccountProfileRepository profileRepository, OrderRepository orderRepository) {
 		return args -> {
 
+			// Account types
 			AccountType disney = accountTypeRepository.save(new AccountType(EAccountType.DISNEY));
 			AccountType netflix = accountTypeRepository.save(new AccountType(EAccountType.NETFLIX));
+			
+			// Saving roles and an administrator user
 			roleRepository.save(new Role(ROLE_USER));
-
 			User admin = new User("Kevin Andres", "Holguín Bedoya", "3104219934",
-					"kevin.holguin@gmail.com", new BCryptPasswordEncoder().encode("admin"), new Role(ROLE_ADMIN));
-			
-			admin.setEnabled(true);
-			
+					"kevin.holguin@gmail.com", new BCryptPasswordEncoder().encode("admin"), new Role(ROLE_ADMIN));			
+			admin.setEnabled(true);			
 			userRepository.save(admin);
-
+			
+			// Saving new orders
+			orderRepository.save(new Order("0000001", LocalDateTime.now(), 58950L, admin));
+			orderRepository.save(new Order("0000002", LocalDateTime.now().plusMinutes(60), 58950L, admin));
+			orderRepository.save(new Order("0000003", LocalDateTime.now().plusHours(2), 58950L, admin));
+			orderRepository.save(new Order("0000004", LocalDateTime.now().plusHours(6), 58950L, admin));
+			
+			// Saving streaming accounts
 			Account joan = accountRepository
 					.save(new Account("joan.mosquera@gmail.com", "joan123", disney, "Cuenta de disney de una pantalla",
 							25500L, "http://localhost:8080/api/public/account/image/DINEY.jfif", new ArrayList<>()));
@@ -75,7 +85,8 @@ public class SgvdkapiApplication {
 								25000L, "http://localhost:8080/api/public/account/image/" + types[r].getName().name(),
 								new ArrayList<>()));
 			}
-
+			
+			// Saving new profiles
 			profileRepository.save(new AccountProfile(null, "user1", "1234", joan));
 			profileRepository.save(new AccountProfile(null, "user2", "4321", joan));
 			profileRepository.save(new AccountProfile(null, "user1", "1234", tom));
