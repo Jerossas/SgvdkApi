@@ -5,11 +5,14 @@ import java.util.Collection;
 import javax.persistence.*;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @NoArgsConstructor
+@Table(name = "roles")
+@EqualsAndHashCode
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

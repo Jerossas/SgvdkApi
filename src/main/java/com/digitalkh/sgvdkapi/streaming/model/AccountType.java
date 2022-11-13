@@ -16,12 +16,14 @@ import com.digitalkh.sgvdkapi.streaming.enumeration.EAccountType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "account_types")
 @NoArgsConstructor
+@EqualsAndHashCode
 public class AccountType {
 
 	@Id
