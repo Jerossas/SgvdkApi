@@ -15,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.digitalkh.sgvdkapi.order.model.Order;
+import com.digitalkh.sgvdkapi.order.model.OrderDetail;
+import com.digitalkh.sgvdkapi.order.repository.OrderDetailRepository;
 import com.digitalkh.sgvdkapi.order.repository.OrderRepository;
 import com.digitalkh.sgvdkapi.streaming.enumeration.EAccountType;
 import com.digitalkh.sgvdkapi.streaming.model.Account;
@@ -36,28 +38,28 @@ public class SgvdkapiApplication {
 	}
 	
 	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
 	public CommandLineRunner lineRunner(UserRepository userRepository, RoleRepository roleRepository,
 			PasswordEncoder passwordEncoder, AccountRepository accountRepository,
-			AccountTypeRepository accountTypeRepository, AccountProfileRepository profileRepository, OrderRepository orderRepository) {
+			AccountTypeRepository accountTypeRepository, AccountProfileRepository profileRepository,
+			OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
 		return args -> {
 
 			// Account types
 			AccountType disney = accountTypeRepository.save(new AccountType(EAccountType.DISNEY));
 			AccountType netflix = accountTypeRepository.save(new AccountType(EAccountType.NETFLIX));
-			
+
 			// Saving roles and an administrator user
 			roleRepository.save(new Role(ROLE_USER));
-			User admin = new User("Kevin Andres", "Holguín Bedoya", "3104219934",
-					"kevin.holguin@gmail.com", new BCryptPasswordEncoder().encode("admin"), new Role(ROLE_ADMIN));			
-			admin.setEnabled(true);			
+			User admin = new User("Kevin Andres", "Holguín Bedoya", "3104219934", "kevin.holguin@gmail.com",
+					new BCryptPasswordEncoder().encode("admin"), new Role(ROLE_ADMIN));
+			admin.setEnabled(true);
 			userRepository.save(admin);
-			
-			// Saving new orders
-			orderRepository.save(new Order("0000001", LocalDateTime.now(), 58950L, admin));
-			orderRepository.save(new Order("0000002", LocalDateTime.now().plusMinutes(60), 58950L, admin));
-			orderRepository.save(new Order("0000003", LocalDateTime.now().plusHours(2), 58950L, admin));
-			orderRepository.save(new Order("0000004", LocalDateTime.now().plusHours(6), 58950L, admin));
-			
+
 			// Saving streaming accounts
 			Account joan = accountRepository
 					.save(new Account("joan.mosquera@gmail.com", "joan123", disney, "Cuenta de disney de una pantalla",
@@ -67,10 +69,21 @@ public class SgvdkapiApplication {
 					new Account("tom.mendez@gmail.com", "tom123", netflix, "Cuenta de netflix de cuatro pantallas",
 							25500L, "http://localhost:8080/api/public/account/image/NETFLIX.jfif", new ArrayList<>()));
 
-			@SuppressWarnings("unused")
 			Account linda = accountRepository
 					.save(new Account("linda@gmail.com", "linda123", disney, "Cuenta de Disney de cuatro pantallas",
 							25500L, "http://localhost:8080/api/public/account/image/DISNEY.jfif", new ArrayList<>()));
+
+			// Saving new orders
+			Order adminOrder = orderRepository
+					.save(new Order(LocalDateTime.now(), 58950L, admin, new ArrayList<>()));
+			orderDetailRepository.save(new OrderDetail(null, joan.getAccountType().getName().name() + " account", 1, joan.getPrice(),
+					joan.getPrice(), adminOrder, joan));
+			
+			orderDetailRepository.save(new OrderDetail(null, tom.getAccountType().getName().name() + " account", 1, tom.getPrice(), tom.getPrice(),
+					adminOrder, tom));
+			
+			orderDetailRepository.save(new OrderDetail(null, linda.getAccountType().getName().name() + " account", 1, linda.getPrice(),
+					linda.getPrice(), adminOrder, linda));
 
 			String[] names = { "Andres", "Maria Jose", "Alejandro", "Karen", "Rodrigo", "Roberto", "Alvaro" };
 			AccountType[] types = { netflix, disney };
@@ -85,7 +98,7 @@ public class SgvdkapiApplication {
 								25000L, "http://localhost:8080/api/public/account/image/" + types[r].getName().name(),
 								new ArrayList<>()));
 			}
-			
+
 			// Saving new profiles
 			profileRepository.save(new AccountProfile(null, "user1", "1234", joan));
 			profileRepository.save(new AccountProfile(null, "user2", "4321", joan));

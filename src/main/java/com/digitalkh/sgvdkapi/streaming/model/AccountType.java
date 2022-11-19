@@ -1,5 +1,6 @@
 package com.digitalkh.sgvdkapi.streaming.model;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
@@ -24,7 +25,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "account_types")
 @NoArgsConstructor
 @EqualsAndHashCode
-public class AccountType {
+public class AccountType implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 38698739543008281L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

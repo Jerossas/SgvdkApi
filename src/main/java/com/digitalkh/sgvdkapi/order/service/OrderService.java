@@ -11,6 +11,6 @@ public interface OrderService {
 	List<Order> findAll();
 	Optional<Order> findById(Long id);
 	Order save(Order order);
-	String generateOrderNumber();
 	List<Order> findByUser(User user);
+	String delete(Long id);
 }

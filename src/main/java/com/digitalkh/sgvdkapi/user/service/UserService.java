@@ -16,7 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.digitalkh.sgvdkapi.order.model.Order;
+import com.digitalkh.sgvdkapi.order.model.OrderDetail;
+import com.digitalkh.sgvdkapi.order.service.OrderDetailService;
 import com.digitalkh.sgvdkapi.order.service.OrderService;
+import com.digitalkh.sgvdkapi.streaming.repository.AccountRepository;
 import com.digitalkh.sgvdkapi.user.authentication.signup.confirmation_token.ConfirmationToken;
 import com.digitalkh.sgvdkapi.user.authentication.signup.confirmation_token.ConfirmationTokenService;
 import com.digitalkh.sgvdkapi.user.dto.UserChangePasswordDto;
@@ -35,10 +38,16 @@ public class UserService implements UserDetailsService {
 	private UserRepository userRepository;
 	
 	@Autowired
+	private AccountRepository accountRepository;
+	
+	@Autowired
 	private ConfirmationTokenService tokenService;
 	
 	@Autowired
 	private OrderService orderService;
+	
+	@Autowired
+	private OrderDetailService orderDetailService;
 
 	@Override
 	@Transactional
@@ -125,5 +134,21 @@ public class UserService implements UserDetailsService {
 	
 	public Order getOrder(Long orderId) {
 		return orderService.findById(orderId).orElseThrow(null);
+	}
+	
+	public Order saveOrder(Order order) {
+		List<OrderDetail> orderDetails = order.getOrderDetails();
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		order.setUser(userRepository.findByEmail(user.getEmail()).get());	
+		order = orderService.save(order);
+		
+		for(OrderDetail od: orderDetails) {
+			od.setOrder(order);
+			od.setAccount(accountRepository.findByEmail(od.getAccount().getEmail()).get());
+			orderDetailService.save(od);
+		}
+		
+		return order;
 	}
 }

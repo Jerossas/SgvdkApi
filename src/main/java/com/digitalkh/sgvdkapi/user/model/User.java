@@ -53,6 +53,7 @@ public class User implements UserDetails {
 	@JoinColumn(name = "role_id", referencedColumnName = "id")
 	private Role role;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Order> orders;
 
@@ -159,5 +160,12 @@ public class User implements UserDetails {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
 }

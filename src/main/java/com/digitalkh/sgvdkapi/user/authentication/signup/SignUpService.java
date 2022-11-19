@@ -12,8 +12,8 @@ import com.digitalkh.sgvdkapi.user.authentication.signup.confirmation_token.Conf
 import com.digitalkh.sgvdkapi.user.authentication.signup.email.EmailSender;
 import com.digitalkh.sgvdkapi.user.authentication.signup.email.EmailValidator;
 import com.digitalkh.sgvdkapi.user.model.ERole;
-import com.digitalkh.sgvdkapi.user.model.Role;
 import com.digitalkh.sgvdkapi.user.model.User;
+import com.digitalkh.sgvdkapi.user.repository.RoleRepository;
 import com.digitalkh.sgvdkapi.user.service.UserService;
 
 @Service
@@ -29,6 +29,9 @@ public class SignUpService {
 	private ConfirmationTokenService tokenService;
 	
 	@Autowired
+	private RoleRepository roleRepository;
+	
+	@Autowired
 	private EmailSender emailSender;
 
 	public String signUp(SignUpRequest request) {
@@ -39,7 +42,7 @@ public class SignUpService {
 		}
 
 		String token = userService.signUp(new User(request.getName(), request.getLastname(), request.getPhone(),
-				request.getEmail(), request.getPassword(), new Role(ERole.ROLE_USER)));
+				request.getEmail(), request.getPassword(), roleRepository.findByName(ERole.ROLE_USER).orElse(null)));
 		
 		String link = "http://192.168.1.11:8080/api/auth/confirm?token=" + token;
 		

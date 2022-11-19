@@ -1,11 +1,11 @@
 package com.digitalkh.sgvdkapi.order.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.digitalkh.sgvdkapi.user.model.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,28 +27,38 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class Order {
+public class Order implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6372297526643214404L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	private String number;
+
 	private LocalDateTime creationDate;
 	private Long total;
-	
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
+
+	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderDetail> orderDetails;
 
-	public Order(String number, LocalDateTime creationDate, Long total, User user) {
-		this.number = number;
+	public Order(LocalDateTime creationDate, Long total, User user) {
 		this.creationDate = creationDate;
 		this.total = total;
 		this.user = user;
+	}
+
+	public Order(LocalDateTime creationDate, Long total, User user, List<OrderDetail> orderDetails) {
+		super();
+		this.creationDate = creationDate;
+		this.total = total;
+		this.user = user;
+		this.orderDetails = orderDetails;
 	}
 }

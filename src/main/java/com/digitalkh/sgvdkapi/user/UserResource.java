@@ -50,4 +50,9 @@ public class UserResource {
 	public Order getOrder(@PathVariable("id") Long id){
 		return userService.getOrder(id);
 	}
+	
+	@PostMapping("/orders/save")
+	public Order saveOrder(@RequestBody Order order) {
+		return userService.saveOrder(order);
+	}
 }

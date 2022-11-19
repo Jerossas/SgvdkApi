@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.digitalkh.sgvdkapi.streaming.dto.EditAccountDto;
 import com.digitalkh.sgvdkapi.streaming.model.Account;
 import com.digitalkh.sgvdkapi.streaming.model.AccountProfile;
 import com.digitalkh.sgvdkapi.streaming.model.AccountType;
@@ -60,7 +61,7 @@ public class AccountManagementResource {
 	}
 	
 	@PutMapping("/update/{id}")
-	public Account updateAccount(@PathVariable("id") Long id, @RequestBody Account account){
+	public Account updateAccount(@PathVariable("id") Long id, @RequestBody EditAccountDto account){
 		account.setId(id);		
 		return accountServiceImpl.update(account);
 	}

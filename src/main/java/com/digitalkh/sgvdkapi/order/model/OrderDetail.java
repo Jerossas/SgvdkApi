@@ -1,5 +1,7 @@
 package com.digitalkh.sgvdkapi.order.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,31 +25,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class OrderDetail {
+public class OrderDetail implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7897629495954401652L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
-	private int amount;
+	private int quantity;
 	private Long price;
-	private Long total;
+	private Long subTotal;
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_id", nullable = false)
+	@JoinColumn(name = "order_id")
 	private Order order;
 	
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "account_id", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "account_id")
 	private Account account;
 
-	public OrderDetail(Long id, String name, int amount, Long price, Long total) {
+	public OrderDetail(Long id, String name, int quantity, Long price, Long subTotal) {
 		this.id = id;
 		this.name = name;
-		this.amount = amount;
+		this.quantity = quantity;
 		this.price = price;
-		this.total = total;
+		this.subTotal = subTotal;
 	}
 }

@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.digitalkh.sgvdkapi.streaming.dto.AccountProfileViewDto;
 import com.digitalkh.sgvdkapi.streaming.dto.AccountViewDto;
@@ -16,6 +15,7 @@ import com.digitalkh.sgvdkapi.streaming.model.Account;
 import com.digitalkh.sgvdkapi.streaming.model.AccountProfile;
 import com.digitalkh.sgvdkapi.streaming.repository.AccountRepository;
 import com.digitalkh.sgvdkapi.streaming.service.AccountService;
+import com.digitalkh.sgvdkapi.streaming.dto.EditAccountDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,6 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public Account create(Account account) {
 		log.info("Saving new Streaming account: {}", account.getEmail());
-		account.setImageUrl(setStreamingAccountImgUrl(account.getAccountType().getName().name()));
 		return accountRepository.save(account);
 	}
 
@@ -48,9 +47,18 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Account update(Account account) {
+	public Account update(EditAccountDto account) {
 		log.info("Updating Streaming account: {}", account.getEmail());
-		return accountRepository.save(account);
+		Account updateAccount = accountRepository.findById(account.getId()).orElse(null);
+		
+		updateAccount.setEmail(account.getEmail());
+		updateAccount.setPassword(account.getPassword());
+		updateAccount.setAccountType(account.getAccountType());
+		updateAccount.setDescription(account.getDescription());
+		updateAccount.setPrice(account.getPrice());
+		updateAccount.setImageUrl(account.getImageUrl());
+		
+		return accountRepository.save(updateAccount);
 	}
 
 	@Override
@@ -90,10 +98,5 @@ public class AccountServiceImpl implements AccountService {
 		dto.setName(accountProfile.getName());
 		
 		return dto;
-	}
-
-	private String setStreamingAccountImgUrl(String accountType) {
-		return ServletUriComponentsBuilder.fromCurrentContextPath()
-				.path("api/public/account/image/" + accountType + ".jfif").toUriString();
 	}
 }

@@ -1,5 +1,7 @@
 package com.digitalkh.sgvdkapi.streaming.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,8 +24,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "account_profiles")
 @EqualsAndHashCode
-public class AccountProfile {
+public class AccountProfile implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1533453828259428466L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

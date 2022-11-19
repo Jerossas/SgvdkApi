@@ -1,5 +1,6 @@
 package com.digitalkh.sgvdkapi.streaming.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,12 +26,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "accounts")
 @EqualsAndHashCode
-public class Account {
+public class Account implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4840011756757701869L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+//	private String referenceCode;	
 	private String email;
 	private String password;
 	
